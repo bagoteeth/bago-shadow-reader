@@ -1,0 +1,138 @@
+'use strict';
+
+const addButton = document.getElementById('addButton');
+const deleteButton = document.getElementById('deleteButton');
+const detailPage = document.getElementById('detailPageContainer');
+const detailPageFileName = document.getElementById('fileName');
+const detailPageCloseButton = document.getElementById('closeButton');
+const selectAll = document.getElementById('selectAll');
+const fileList = document.getElementById('fileList');
+
+document.addEventListener('DOMContentLoaded', function() {
+
+  addButton.addEventListener('click', handleAddButtonClick);
+  deleteButton.addEventListener('click', handleDeleteButtonClick);
+  detailPageCloseButton.addEventListener('click', handleCloseDetailPageClick);
+  selectAll.addEventListener('change', handleSelectAllChange);
+  fileList.addEventListener('click', handleDetailPageShown);
+  fileList.addEventListener('mouseover', handleMouseOver);
+  fileList.addEventListener('mouseout', handleMouseOut);
+
+  initializeFileList();
+});
+  
+function handleCloseDetailPageClick(){
+  detailPage.style.display = 'none';
+}
+
+function initializeFileList() {
+  //获取本地记录
+  chrome.storage.local.get({files: []}, function(result) {
+    const tmpFiles = result.files;
+    tmpFiles.forEach(file => addFileToTable(file));
+  });
+  // chrome.runtime.sendMessage({ action: 'getFiles' }, function (response) {
+  //   response.files.forEach(file => addFileToTable(file));
+  // });
+}
+
+function handleAddButtonClick(){
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = '.epub';
+  fileInput.multiple = true;
+  fileInput.addEventListener('change', handleFileInputChange);
+  fileInput.click();
+}
+
+function handleDeleteButtonClick(){
+  const filesToDelete = [];
+  const checkboxes = document.querySelectorAll('.file-row input[type="checkbox"]');
+  for(let i=checkboxes.length-1; i>=0;i--){
+    if(checkboxes[i].checked){
+      // 不能同名
+      filesToDelete.push(checkboxes[i].parentElement.nextElementSibling.textContent);
+      // filelist开头多一行标题，checkboxes相当于从第二行开始
+      fileList.deleteRow(i+1);
+    }
+  }
+  // chrome.runtime.sendMessage({ action: 'deleteFiles', files: filesToDelete });
+  chrome.storage.local.get({files: []}, function(result){
+    const tmpFiles = result.files.filter(function(fileName){
+      return !filesToDelete.includes(fileName);
+    })
+    chrome.storage.local.set({files: tmpFiles});
+  });
+}
+
+function handleSelectAllChange(){
+  const checkboxes = document.querySelectorAll('.file-row input[type="checkbox"]');
+  checkboxes.forEach((checkbox) => {
+    checkbox.checked = selectAll.checked;
+  });
+}
+
+function handleFileInputChange(event) {
+  const selectedFiles = event.target.files;
+  for (const file of selectedFiles){
+    if (checkDuplicate(file.name)){
+      alert(`${file.name}已存在`);
+      return;
+    }
+  }
+  for (const file of selectedFiles){
+    addFileToTable(file.name);
+  }
+  // 持久化
+  // chrome.runtime.sendMessage({ action: 'addFiles', files: selectedFiles})
+  chrome.storage.local.get({files: []}, function(result) {
+    const tmpFiles = result.files;
+    for (const file of selectedFiles){
+      tmpFiles.push(file.name);
+    }
+    chrome.storage.local.set({files: tmpFiles});
+  });
+}
+
+function checkDuplicate(fileNameText) {
+  const existingFiles = Array.from(fileList.querySelectorAll('.file-row td:nth-child(2)')).map(cell => cell.textContent.trim());
+  return existingFiles.includes(fileNameText);
+}
+
+// 只负责修改表格，持久化在其他地方做
+function addFileToTable(fileNameText){
+  const row = fileList.insertRow();
+  row.classList.add('file-row');
+
+  const checkboxCell = row.insertCell(0);
+  const filenameCell = row.insertCell(1);
+
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkboxCell.appendChild(checkbox);
+  // 暂时只显示文件名
+  const fileName = document.createTextNode(fileNameText);
+  filenameCell.appendChild(fileName);
+}
+
+function handleDetailPageShown(event){
+  if(event.target && event.target.tagName === 'TD' && event.target.parentElement.rowIndex > 0 && event.target.cellIndex === 1){
+    detailPageFileName.textContent = event.target.textContent.trim();
+    detailPage.style.display = 'block';
+  }
+}
+
+function handleMouseOver(event){
+  if(event.target && event.target.tagName === 'TD' && event.target.parentElement.rowIndex > 0 && event.target.cellIndex === 1){
+    event.target.style.color = '#888888';
+    event.target.style.cursor = 'pointer';
+  }
+}
+
+function handleMouseOut(event){
+  if(event.target && event.target.tagName === 'TD' && event.target.parentElement.rowIndex > 0 && event.target.cellIndex === 1){
+    event.target.style.color = '';
+    event.target.style.cursor = '';
+  }
+}
+

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bago Epub</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <button id="addButton">新增</button>
+  <button id="deleteButton">删除</button>
+  <div id="detailPageContainer">
+    <h2>文件详情</h1>
+    <p id="fileName"></p>
+    <button id="closeButton">关闭页面</button>
+  </div>
+  <div id="fileListContainer">
+    <table id="fileList">
+      <tr>
+        <th><input type="checkbox" id="selectAll">全选</th>
+        <th>文件名</th>
+      </tr>
+    </table>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

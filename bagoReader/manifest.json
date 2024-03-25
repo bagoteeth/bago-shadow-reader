@@ -1,0 +1,37 @@
+{
+    "name": "Bago Reader",
+    "description": "read epub in shadow",
+    "version": "1.0",
+    "manifest_version": 3,
+
+    "permissions": [
+        "storage",
+        "activeTab"
+    ],
+
+    "icons": {
+        "16": "btn16.png",
+        "48": "btn48.png",
+        "128": "btn128.png"
+    },
+
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": "btn16.png",
+        "default_title": "Bago click me"
+    },
+
+    "commands": {
+        "_execute_action": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+B",
+                "mac": "MacCtrl+Shift+B"
+            },
+            "description": "Opens bago's popup.html"
+        }
+    },
+
+    "background": {
+        "service_worker": "background.js"
+    }
+}

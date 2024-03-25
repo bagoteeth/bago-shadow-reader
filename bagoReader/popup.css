@@ -1,0 +1,55 @@
+  body {
+    width: 300px;
+    text-align: center;
+  }
+
+  button {
+    width: 100px;
+    height: 40px;
+    margin: 15px;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f2f2f2;
+  }
+
+  .file-row:hover {
+    background-color: #f5f5f5;
+  }
+
+  #fileListContainer{
+    height: 300px;
+    overflow-y: auto;
+  }
+
+h2 {
+  margin-bottom: 10px;
+}
+p{
+    margin: 5px 0;
+}
+#closeButton {
+  cursor: pointer;
+}
+#detailPageContainer{
+    width: 250px; /* 设置容器宽度 */
+    padding: 20px;
+    border: 1px solid #888888; /* 添加边框 */
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: none;
+}
