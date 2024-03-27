@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bago Epub</title>
   <link rel="stylesheet" href="popup.css">
+  <script src="libs/epub.min.js"></script>
 </head>
 <body>
   <button id="addButton">新增</button>
@@ -21,6 +22,17 @@
         <th>文件名</th>
       </tr>
     </table>
+  </div>
+  <div>
+    <label for="textSizeSelect">单次显示字数：</label>
+    <select id="textSizeSelect" disabled>
+      <button id="modifyButton">修改</button>
+      <input type="number" id="textSizeInput" style="display: none;">
+      <option value="200">200</option> <!-- 默认值 -->
+      <button id="saveButton">保存</button>
+      
+    </select>
+    
   </div>
   <script src="popup.js"></script>
 </body>

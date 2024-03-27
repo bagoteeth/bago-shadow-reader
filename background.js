@@ -3,6 +3,10 @@
 // background.js
 chrome.runtime.onInstalled.addListener(function (){
     console.log("插件已安装");
+    chrome.storage.local.get('textSize', function(data){
+        const previousSize = data.textSize || 200;
+        chrome.storage.local.set({textSize: previousSize})
+    });
 });
 
 chrome.storage.onChanged.addListener(function(changes, namespace){
@@ -19,6 +23,7 @@ chrome.storage.onChanged.addListener(function(changes, namespace){
     }
 });
 
+// 没用
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.action === 'addFiles') {
         const selectedFiles = request.files;
