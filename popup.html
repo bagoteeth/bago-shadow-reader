@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,11 +8,10 @@
   <link rel="stylesheet" href="popup.css">
   <script src="libs/epub.min.js"></script>
 </head>
+
 <body>
-  <button id="addButton">新增</button>
-  <button id="deleteButton">删除</button>
   <div id="detailPageContainer">
-    <h2>文件详情</h1>
+    <h2>书名</h2>
     <p id="fileName"></p>
     <button id="closeButton">关闭页面</button>
   </div>
@@ -19,21 +19,24 @@
     <table id="fileList">
       <tr>
         <th><input type="checkbox" id="selectAll">全选</th>
-        <th>文件名</th>
+        <th>书名</th>
       </tr>
     </table>
   </div>
-  <div>
-    <label for="textSizeSelect">单次显示字数：</label>
-    <select id="textSizeSelect" disabled>
-      <button id="modifyButton">修改</button>
-      <input type="number" id="textSizeInput" style="display: none;">
-      <option value="200">200</option> <!-- 默认值 -->
-      <button id="saveButton">保存</button>
-      
-    </select>
-    
+  <div id="textSizeContainer">
+    <h2>单次显示字数</h2>
+    <div>
+      <button id="textSizeModifyButton">修改</button>
+      <input type="number" id="textSizeInput" disabled>
+      <button id="textSizeSaveButton">保存</button>
+    </div>
+  </div>
+  <div id="buttonContainer">
+    <button id="addButton">新增</button>
+    <button id="deleteButton">删除</button>
+    <button id="exitButton">退出阅读状态</button>
   </div>
   <script src="popup.js"></script>
 </body>
+
 </html>

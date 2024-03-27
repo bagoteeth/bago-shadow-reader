@@ -1,16 +1,16 @@
 'use strict';
 
 // background.js
-chrome.runtime.onInstalled.addListener(function (){
+chrome.runtime.onInstalled.addListener(function () {
     console.log("插件已安装");
-    chrome.storage.local.get('textSize', function(data){
+    chrome.storage.local.get('textSize', function (data) {
         const previousSize = data.textSize || 200;
-        chrome.storage.local.set({textSize: previousSize})
+        chrome.storage.local.set({ textSize: previousSize })
     });
 });
 
-chrome.storage.onChanged.addListener(function(changes, namespace){
-    for(let [key, {oldValue, newValue}] of Object.entries(changes)){
+chrome.storage.onChanged.addListener(function (changes, namespace) {
+    for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
         console.log(
             `
             Storage key "${key}" in namespace "${namespace}" changed. 
@@ -41,7 +41,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             const tmpFiles = result.files.filter(fileName => !filesToDelete.includes(fileName));
             chrome.storage.local.set({ files: tmpFiles });
         });
-    } 
+    }
     else if (request.action === 'getFiles') {
         chrome.storage.local.get({ files: [] }, function (result) {
             sendResponse({ files: result.files });

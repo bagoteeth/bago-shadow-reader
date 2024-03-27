@@ -1,55 +1,103 @@
-  body {
-    width: 300px;
-    text-align: center;
-  }
+body {
+  width: 300px;
+  text-align: center;
+}
 
-  button {
-    width: 100px;
-    height: 30px;
-    margin: 15px;
-    padding: 5px;
-    cursor: pointer;
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
 
-  th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
 
-  th {
-    background-color: #f2f2f2;
-  }
+th {
+  background-color: #f2f2f2;
+}
 
-  .file-row:hover {
-    background-color: #f5f5f5;
-  }
+.file-row:hover {
+  background-color: #f5f5f5;
+}
 
-  #fileListContainer{
-    height: 300px;
-    overflow-y: auto;
-  }
-
-h2 {
+#fileListContainer {
+  width: 280px;
+  border: 1px solid #888888;
+  border-radius: 5px;
   margin-bottom: 10px;
+  margin-top: 10px;
+  overflow-y: auto;
 }
-p{
-    margin: 5px 0;
+
+p {
+  margin: 5px 0;
 }
+
 #closeButton {
   cursor: pointer;
 }
-#detailPageContainer{
-    width: 250px; /* 设置容器宽度 */
-    padding: 20px;
-    border: 1px solid #888888; /* 添加边框 */
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: none;
+
+#detailPageContainer {
+  width: 280px;
+  border: 1px solid #888888;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: none;
+}
+
+#textSizeContainer {
+  width: 280px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #888888;
+  border-radius: 5px;
+}
+
+#textSizeContainer h4 {
+  margin-bottom: 10px;
+}
+
+#textSizeContainer div {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+#textSizeModifyButton,
+#textSizeInput,
+#textSizeSaveButton {
+  flex: 1;
+  /* 让按钮和文本框占用相同的空间 */
+  width: 0px;
+  height: 30px;
+  margin: 0px 5px;
+  /* 添加一些左右间距 */
+  padding: 8px 12px;
+  /* 添加一些内边距 */
+  cursor: pointer;
+  /* 设置光标样式为指针 */
+}
+
+#buttonContainer {
+  width: 280px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  border: 1px solid #888888;
+  border-radius: 5px;
+}
+
+#buttonContainer button {
+  width: 80px;
+  height: 30px;
+  margin: 5px;
+  padding: 5px;
+  cursor: pointer;
 }
