@@ -1,15 +1,22 @@
 'use strict';
-
+// fileListContainer
 const addButton = document.getElementById('addButton');
 const deleteButton = document.getElementById('deleteButton');
-
-const detailPage = document.getElementById('detailPageContainer');
-const detailPageFileName = document.getElementById('fileName');
-const detailPageCloseButton = document.getElementById('closeButton');
-
+const exitButton = document.getElementById('exitButton');
 const selectAll = document.getElementById('selectAll');
 const fileList = document.getElementById('fileList');
-
+// detailPageContainer
+const detailPage = document.getElementById('detailPageContainer');
+const detailPageFileName = document.getElementById('bookTitle');
+const detailPageWordCount = document.getElementById('wordCount');
+const detailPageTime = document.getElementById('readingTime');
+const detailPageStatus = document.getElementById('bookStatus');
+const tocList = document.getElementById('tocList');
+const bookmarksList = document.getElementById('bookmarksList');
+const deleteBookmarkButton = document.getElementById('deleteBookmarkButton');
+const continueReadingButton = document.getElementById('continueReadingButton');
+const detailPageCloseButton = document.getElementById('closeButton');
+// textSizeContainer
 const textSizeModifyButton = document.getElementById('textSizeModifyButton')
 const textSizeInput = document.getElementById('textSizeInput')
 const textSizeSaveButton = document.getElementById('textSizeSaveButton')
@@ -20,17 +27,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
   addButton.addEventListener('click', handleAddButtonClick);
   deleteButton.addEventListener('click', handleDeleteButtonClick);
-
-  detailPageCloseButton.addEventListener('click', handleCloseDetailPageClick);
-
   selectAll.addEventListener('change', handleSelectAllChange);
   fileList.addEventListener('click', handleDetailPageShown);
   fileList.addEventListener('mouseover', handleMouseOver);
   fileList.addEventListener('mouseout', handleMouseOut);
 
+  deleteBookmarkButton.addEventListener('click', handleDeleteBookmark);
+  continueReadingButton.addEventListener('click', handleContinueReading);
+  detailPageCloseButton.addEventListener('click', handleCloseDetailPageClick);
+
   textSizeModifyButton.addEventListener('click', handleTextSizeModifyButtonClick);
   textSizeSaveButton.addEventListener('click', handleTextSizeSaveButtonClick);
 });
+
+function handleDeleteBookmark(){
+
+}
+
+function handleContinueReading(){
+
+}
 
 function handleTextSizeModifyButtonClick() {
   textSizeInput.removeAttribute('disabled');
@@ -147,6 +163,8 @@ function addFileToTable(fileNameText) {
 function handleDetailPageShown(event) {
   if (event.target && event.target.tagName === 'TD' && event.target.parentElement.rowIndex > 0 && event.target.cellIndex === 1) {
     detailPageFileName.textContent = event.target.textContent.trim();
+    //加载字数，时间，状态，目录，书签
+    
     detailPage.style.display = 'block';
   }
 }

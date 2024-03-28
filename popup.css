@@ -23,6 +23,14 @@ th {
   background-color: #f5f5f5;
 }
 
+#fileListContainer button {
+  width: 80px;
+  height: 30px;
+  margin: 5px;
+  padding: 5px;
+  cursor: pointer;
+}
+
 #fileListContainer {
   width: 280px;
   border: 1px solid #888888;
@@ -30,10 +38,6 @@ th {
   margin-bottom: 10px;
   margin-top: 10px;
   overflow-y: auto;
-}
-
-p {
-  margin: 5px 0;
 }
 
 #closeButton {
@@ -61,8 +65,10 @@ p {
   border-radius: 5px;
 }
 
-#textSizeContainer h4 {
-  margin-bottom: 10px;
+#textSizeSummary {
+  font-size: large;
+  margin: 10px;
+  cursor: pointer;
 }
 
 #textSizeContainer div {
@@ -84,20 +90,4 @@ p {
   /* 添加一些内边距 */
   cursor: pointer;
   /* 设置光标样式为指针 */
-}
-
-#buttonContainer {
-  width: 280px;
-  margin-bottom: 10px;
-  margin-top: 10px;
-  border: 1px solid #888888;
-  border-radius: 5px;
-}
-
-#buttonContainer button {
-  width: 80px;
-  height: 30px;
-  margin: 5px;
-  padding: 5px;
-  cursor: pointer;
 }

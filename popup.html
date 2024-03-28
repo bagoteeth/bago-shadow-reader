@@ -10,12 +10,10 @@
 </head>
 
 <body>
-  <div id="detailPageContainer">
-    <h2>书名</h2>
-    <p id="fileName"></p>
-    <button id="closeButton">关闭页面</button>
-  </div>
   <div id="fileListContainer">
+    <button id="addButton">新增</button>
+    <button id="deleteButton">删除</button>
+    <button id="exitButton">退出阅读状态</button>
     <table id="fileList">
       <tr>
         <th><input type="checkbox" id="selectAll">全选</th>
@@ -23,18 +21,49 @@
       </tr>
     </table>
   </div>
-  <div id="textSizeContainer">
-    <h2>单次显示字数</h2>
-    <div>
-      <button id="textSizeModifyButton">修改</button>
-      <input type="number" id="textSizeInput" disabled>
-      <button id="textSizeSaveButton">保存</button>
+  <div id="detailPageContainer">
+    <h3 id="bookTitle"></h3>
+    <div id="bookInfo">
+      <div class="infoItem">
+        <span class="infoLabel">字数:</span>
+        <span id="wordCount">统计字数</span>
+      </div>
+      <div class="infoItem">
+        <span class="infoLabel">阅读时长:</span>
+        <span id="readingTime">统计阅读时长</span>
+      </div>
+      <div class="infoItem">
+        <span class="infoLabel">状态:</span>
+        <span id="bookStatus">未阅读</span>
+      </div>
+    </div>
+    <div id="tocContainer">
+      <details>
+        <summary id="tocListSum">目录</summary>
+        <div id="tocList"></div>
+      </details>
+    </div>
+    <div id="bookmarksContainer">
+      <details>
+        <summary id="bookmarksListSum">书签</summary>
+        <div id="bookmarksList"></div>
+        <button id="deleteBookmarkButton">删除书签</button>
+      </details>
+    </div>
+    <div id="detailPageButtonContainer">
+      <button id="continueReadingButton">继续阅读</button>
+      <button id="closeButton">关闭页面</button>
     </div>
   </div>
-  <div id="buttonContainer">
-    <button id="addButton">新增</button>
-    <button id="deleteButton">删除</button>
-    <button id="exitButton">退出阅读状态</button>
+  <div id="textSizeContainer">
+    <details>
+      <summary id="textSizeSummary">单次显示字数</summary>
+      <div>
+        <button id="textSizeModifyButton">修改</button>
+        <input type="number" id="textSizeInput" disabled>
+        <button id="textSizeSaveButton">保存</button>
+      </div>
+    </details>
   </div>
   <script src="popup.js"></script>
 </body>
