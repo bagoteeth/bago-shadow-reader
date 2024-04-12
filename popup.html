@@ -10,6 +10,16 @@
 </head>
 
 <body>
+  <div id="overviewContainer">
+    <div class="infoItem">
+      <span class="infoLabel">阅读字数:</span>
+      <span id="wordCountTotal"></span>
+    </div>
+    <div class="infoItem">
+      <span class="infoLabel">阅读时长:</span>
+      <span id="readingTimeTotal"></span>
+    </div>
+  </div>
   <div id="fileListContainer">
     <button id="addButton">新增</button>
     <button id="deleteButton">删除</button>
@@ -26,28 +36,49 @@
     <div id="bookInfo">
       <div class="infoItem">
         <span class="infoLabel">字数:</span>
-        <span id="wordCount">统计字数</span>
+        <span id="wordCount"></span>
       </div>
       <div class="infoItem">
         <span class="infoLabel">阅读时长:</span>
-        <span id="readingTime">统计阅读时长</span>
+        <span id="readingTime"></span>
       </div>
       <div class="infoItem">
         <span class="infoLabel">状态:</span>
-        <span id="bookStatus">未阅读</span>
+        <span id="bookStatus"></span>
       </div>
     </div>
     <div id="tocContainer">
       <details>
         <summary id="tocListSum">目录</summary>
-        <div id="tocList"></div>
+        <table id="tocList">
+          <thead>
+            <tr>
+              <th>章节</th>
+              <th>进度</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
       </details>
     </div>
     <div id="bookmarksContainer">
       <details>
         <summary id="bookmarksListSum">书签</summary>
-        <div id="bookmarksList"></div>
+        <button id="addBookmarkButton">新建书签</button>
         <button id="deleteBookmarkButton">删除书签</button>
+        <table id="bookmarksList">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="selectAllBookmarks">全选</th>
+              <th>章节</th>
+              <th>进度</th>
+              <th>创建时间</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
       </details>
     </div>
     <div id="detailPageButtonContainer">

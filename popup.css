@@ -35,8 +35,7 @@ th {
   width: 280px;
   border: 1px solid #888888;
   border-radius: 5px;
-  margin-bottom: 10px;
-  margin-top: 10px;
+  margin: 10px;
   overflow-y: auto;
 }
 
@@ -45,7 +44,7 @@ th {
 }
 
 #detailPageContainer {
-  width: 280px;
+  width: 260px;
   border: 1px solid #888888;
   border-radius: 5px;
   margin-bottom: 10px;
@@ -57,10 +56,17 @@ th {
 
 #textSizeContainer {
   width: 280px;
-  margin-bottom: 10px;
-  margin-top: 10px;
+  margin: 10px;
   align-items: center;
   justify-content: space-between;
+  border: 1px solid #888888;
+  border-radius: 5px;
+}
+
+#overviewContainer {
+  width: 280px;
+  margin: 10px;
+  align-items: center;
   border: 1px solid #888888;
   border-radius: 5px;
 }
