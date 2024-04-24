@@ -14,7 +14,7 @@ const fileList = document.getElementById('fileList');
 // detailPageContainer
 const detailPage = document.getElementById('detailPageContainer');
 const detailPageFileName = document.getElementById('bookTitle');
-const detailPageWordCount = document.getElementById('wordCount');
+const detailPageWriter = document.getElementById('writer');
 const detailPageTime = document.getElementById('readingTime');
 const detailPageStatus = document.getElementById('bookStatus');
 const tocList = document.getElementById('tocList').querySelector('tbody');
@@ -30,6 +30,7 @@ const textSizeInput = document.getElementById('textSizeInput');
 const textSizeSaveButton = document.getElementById('textSizeSaveButton');
 
 var currentBookObj;
+var currentBookEpub;
 
 document.addEventListener('DOMContentLoaded', function () {
   initOverview();
@@ -62,7 +63,7 @@ function handleExitButton() {
 function handleAddBookmark(){
   // todo判断在阅读状态
   const bookmark = {
-    chapter: getChapterByProgress(currentBookObj.bookmarkEX),
+    chapter: currentBookEpub.navigation.get(currentBookObj.bookmarkEX).label.trim(),
     progress: currentBookObj.bookmarkEX,
     createTime: new Date().toLocaleString()
   }
@@ -74,13 +75,12 @@ function handleAddBookmark(){
   chrome.storage.local.get({ books: []}, function (result){
     var tmp = result.books;
     var index = tmp.findIndex(e => e.bookName == currentBookObj.bookName);
-    alert(JSON.stringify(tmp[index].bookmarksList));
-    alert(JSON.stringify(currentBookObj.bookmarksList));
     tmp[index] = currentBookObj;
-    alert(JSON.stringify(tmp[index].bookmarksList));
     chrome.storage.local.set({books: tmp});
   });
 }
+
+
 
 function handleDeleteBookmark(){
   const checkboxes = bookmarksList.querySelectorAll('input[type="checkbox"]');
@@ -98,12 +98,8 @@ function handleDeleteBookmark(){
   });
 }
 
-function getChapterByProgress(){
-  return '';
-}
-
 function handleContinueReading(){
-  navigateToChapter(currentBookObj, currentBookObj.bookmarkEX);
+  navigateToChapterFromHref(currentBookObj.bookmarkEX);
 }
 
 function handleTextSizeModifyButtonClick() {
@@ -113,7 +109,7 @@ function handleTextSizeModifyButtonClick() {
 
 function handleTextSizeSaveButtonClick() {
   const newSize = parseInt(textSizeInput.value);
-  chrome.storage.local.set({ textSize: newSize })
+  chrome.storage.local.set({ textSize: newSize });
 
   textSizeInput.setAttribute('disabled', true);
 }
@@ -279,7 +275,7 @@ function handleFileInputChange(event) {
             createTime: xxx
           } */
           bookmarksList: [],
-          bookmarkEX: 0,
+          bookmarkEX: "",
           // 文件本体
           base64:bs64,
         });
@@ -311,7 +307,7 @@ function blob2Base64(blob){
 
 function base642Blob(bs64){
   const mimeType = 'application/epub+zip';
-  const byteCharacters = atob(bs64);
+  const byteCharacters = atob(bs64.split(";base64,")[1]);
   const byteNumbers = [];
   for(let i = 0; i < byteCharacters.length; i++){
     byteNumbers.push(byteCharacters.charCodeAt(i));
@@ -349,66 +345,96 @@ function handleDetailPageShown(event) {
     currentBookObj = result.books.find(book => {
       return book.bookName.trim() == bookName;
     });
-    // 加载书名，阅读时间，状态，书签
+    // 加载阅读时间，状态，书签
     detailPageStatus.textContent = currentBookObj.readStatus;
     detailPageTime.textContent = currentBookObj.readTime;
-    detailPageFileName.textContent = bookName;
     bookmarksList.innerHTML = '';
+    tocList.innerHTML = '';
     currentBookObj.bookmarksList.forEach(bookmark => addBookmarkToList(bookmark));
-    //加载字数，目录
+    //加载书名，作者，目录
     // fixme
-    // var bookItem;
-    // chrome.fileSystem.retainEntry(currentBookObj.url, fe => {
-    //   fe.file(file => {
-    //     var blob = file.slice(0, file.size, file.type);
-    //     var reader = new FileReader();
-    //     reader.onload = function(event){
-    //       var arrayBuffer = event.target.result;
-    //       var uint8Array = new Uint8Array(arrayBuffer);
-    //       var epubResource = new Blob([uint8Array], { type: file.type });
-    //       bookItem = epubResource;
-    //     };
-    //     reader.readAsArrayBuffer(blob);
-    //   });
-    // });
-  
-    // const bookEpub = ePub(bookItem);
-  
-    // alert('目录：', bookEpub.getToc);
-    // alert('字数：',bookEpub.locations.charLength());
-    // bookParser.open(currentBookObj.url).then(function (book){
-    //   tocList.innerHTML = '';
-    //   // fixme
-    //   book.spine.forEach((chapter, index) => {
-    //     const row = document.createElement('tr');
-    //     const chapterCell = document.createElement('td');
-    //     chapterCell.textContent = chapter.title;
-    //     row.appendChild(chapterCell);
-    //     const progressCell = document.createElement('td');
-    //     const progress = (index + 1) / book.spine.length * 100;
-    //     progressCell.textContent = `${progress.toFixed(2)}%`;
-    //     row.appendChild(progressCell);
-    //     row.style.cursor = 'pointer';
-    //     row.addEventListener('click', () => {
-    //         navigateToChapter(currentBookObj, chapter.href);
-    //     });
-  
-    //     tocList.appendChild(row);
-    //   });
-  
-    //   // fixme
-    //   book.getBlob().then(blob => {
-    //     const reader = new FileReader();
-    //     reader.onload = function(event){
-    //       // 统计中文
-    //       const pattern = /[\u4e00-\u9fa5]/g;
-    //       const matches = event.target.result.match(pattern);
-    //       detailPageWordCount.textContent = matches ? matches.length : 0;
-    //     };
-    //   });
-    // });
+    currentBookEpub = ePub(base642Blob(currentBookObj.base64));
+    // currentBookEpub = ePub("https://s3.amazonaws.com/epubjs/books/moby-dick/OPS/package.opf");
+
+    currentBookEpub.loaded.metadata.then(meta => {
+      detailPageFileName.textContent = meta.title;
+      detailPageWriter.textContent = meta.creator;
+    });
+
+
+
+    currentBookEpub.ready.then(() => { 
+      currentBookEpub.navigation.forEach(toc => {
+        // console.log(toc);
+        const chapterName = toc.label.trim();
+        addTocToList(chapterName, toc.href);
+
+        // getContent(toc.href);
+        
+        // getCfiFromHref(toc.href).then(chapterCFI => {
+        //   console.log(toc.href);
+        //   console.log(chapterCFI);
+        //   addTocToList(chapterName, chapterCFI);
+        // });
+
+        // currentBookEpub.opened.then(() => {
+        //   display(3);
+        // });
+
+        // display(toc.href);
+
+        // function display(item){
+        //   var section = currentBookEpub.spine.get(item);
+        //   if(section){
+        //     section.render().then(html => {
+        //       console.log(html);
+        //     });
+        //   }
+        //   return section;
+        // }
+
+        
+      });
+
+      // 这个会打印全文
+      // currentBookEpub.spine.each((item) => {
+      //   item.load(currentBookEpub.load.bind(currentBookEpub)).then((contents) => {
+      //     console.log(contents);
+      //   });
+      // });
+
+    });
     
     detailPage.style.display = 'block';
+  });
+}
+
+function getContent(item){
+  var section = currentBookEpub.spine.get(item);
+  console.log(section);
+  section.render().then(h => {
+    console.log(h);
+  });
+  section.load().then(html => {
+    console.log(html);
+  });
+}
+
+function addTocToList(chapterName, chapterCFI){
+  const row = tocList.insertRow();
+  const chapterCell = row.insertCell(0);
+  const progressCell = row.insertCell(1);
+  
+  chapterCell.textContent = chapterName;
+  // todo change to per
+  progressCell.textContent = chapterCFI;
+  
+
+  [chapterCell, progressCell].forEach(cell => {
+    cell.style.cursor = 'pointer';
+    cell.addEventListener('click', () => {
+      navigateToChapterFromHref(chapterCFI);
+    });
   });
 }
 
@@ -423,21 +449,71 @@ function addBookmarkToList(bookmark){
   checkbox.type = 'checkbox';
   checkboxCell.appendChild(checkbox);
   chapterCell.textContent = bookmark.chapter;
+  // todo change to percentage
   progressCell.textContent = bookmark.progress;
   createTimeCell.textContent = bookmark.createTime;
 
   [chapterCell, progressCell, createTimeCell].forEach(cell => {
     cell.style.cursor = 'pointer';
     cell.addEventListener('click', () => {
-      navigateToChapter(currentBookObj, bookmark.progress);
+      navigateToChapterFromHref(bookmark.progress);
     })
   });
 }
 
+async function getCfiFromHref(href) {
+  const id= href.split('#')[1]
+  const item = currentBookEpub.spine.get(href)
+  await item.load(currentBookEpub.load.bind(currentBookEpub))
+  const el = id ? item.document.getElementById(id) : item.document.body
+  return item.cfiFromElement(el)
+}
+
+// todo无法正确找到
+function getChapterFromCFI(cfi){
+  let flattenedToc = (function flatten(items) {
+    return [].concat.apply([], items.map(item => [].concat.apply(
+        [item],
+        flatten(item.subitems)
+    )));
+  })(currentBookEpub.navigation.toc);
+  console.log("flattenedToc", flattenedToc);
+
+  let parsed = new ePub.CFI(cfi);
+  console.log("parsed", parsed);
+
+  let entry = currentBookEpub.spine.get(parsed.spinePos);
+  console.log("entry", entry);
+  if (!entry) return null;
+
+  let matched = Object.entries(currentBookEpub.navigation.tocById).filter(e => e[1] == entry.index);
+  console.log("matched", matched);
+  if (matched.length < 1) return null;
+
+  let matchedToc = flattenedToc.filter(e => e.id == matched[0][0]);
+  console.log("matchedToc", matchedToc);
+  if (matchedToc.length < 1) return null;
+  return matchedToc[0].label.trim();
+}
+
 // 让特殊书签跳转到对应index（特殊书签，目录，书签）
-function navigateToChapter(bookObj, href){
-  bookObj.bookmarkEX = href;
+function navigateToChapter(cfi){
+  currentBookObj.bookmarkEX = cfi;
   chrome.storage.local.set({ globalReadStatus: true });
+  // todo 其他
+}
+
+function navigateToChapterFromHref(href){
+  // getCfiFromHref(href).then(cfi => {
+  //   currentBookObj.bookmarkEX = cfi;
+  // });
+  currentBookObj.bookmarkEX = href;
+  chrome.storage.local.set({ globalReadStatus: true });
+  var sec = currentBookEpub.spine.get(href)
+  sec.load(currentBookEpub.load.bind(currentBookEpub)).then(h => {
+    console.log(h);
+  });
+
   // todo 其他
 }
 
