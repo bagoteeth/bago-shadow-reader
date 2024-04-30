@@ -1,6 +1,10 @@
 'use strict';
 
 // background.js
+var mouseX;
+var mouseY;
+var currentRendition = null;
+
 chrome.runtime.onInstalled.addListener(function () {
     console.log("插件已安装");
     chrome.storage.local.get('textSize', function (data) {
@@ -36,3 +40,24 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
         );
     }
 });
+
+// document.onmousemove = function(e){
+//     mouseX = e.pageX;
+//     mouseY = e.pageY;
+// };
+    
+
+// chrome.commands.onCommand.addListener(command => {
+//     if (command == "displayText"){
+//         console.log(`displayText x: ${mouseX}, y: ${mouseY}`);
+//         if(currentRendition){
+//             currentRendition.remove();
+//         }
+//         let currentElem = document.elementFromPoint(mouseX, mouseY);
+//         currentRendition = document.createElement("currentRendition");
+//         if(currentElem){
+//             currentElem.insertAdjacentElement("afterend", currentRendition);
+//         }
+//         chrome.runtime.sendMessage({action: "modifyRendition"});
+//     }
+// });

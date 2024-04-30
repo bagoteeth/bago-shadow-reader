@@ -25,6 +25,12 @@
     "commands": {
         "_execute_action": {
             "description": "Opens bago's popup.html"
+        },
+        "displayText": {
+            "suggested_key": {
+                "default": "Alt+R"
+            },
+            "description": "display text"
         }
     },
     "background": {

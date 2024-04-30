@@ -63,7 +63,7 @@ function handleExitButton() {
 function handleAddBookmark(){
   // todo判断在阅读状态
   const bookmark = {
-    chapter: currentBookEpub.navigation.get(currentBookObj.bookmarkEX).label.trim(),
+    chapter: currentBookEpub.navigation.get(currentBookObj.bookmarkEX.href).label.trim(),
     progress: currentBookObj.bookmarkEX,
     createTime: new Date().toLocaleString()
   }
@@ -99,7 +99,7 @@ function handleDeleteBookmark(){
 }
 
 function handleContinueReading(){
-  navigateToChapterFromHref(currentBookObj.bookmarkEX);
+  navigateToChapter2(currentBookObj.bookmarkEX.href, currentBookObj.bookmarkEX.offset);
 }
 
 function handleTextSizeModifyButtonClick() {
@@ -198,6 +198,7 @@ function handleSelectAllBookmarksChange() {
   });
 }
 
+// deprecated
 // 每个文件调用一次
 function handleFileInput(fe) {
   var fileName = fe.name;
@@ -275,7 +276,10 @@ function handleFileInputChange(event) {
             createTime: xxx
           } */
           bookmarksList: [],
-          bookmarkEX: "",
+          bookmarkEX: {
+            href: "",
+            offset: 0,
+          },
           // 文件本体
           base64:bs64,
         });
@@ -368,6 +372,9 @@ function handleDetailPageShown(event) {
         // console.log(toc);
         const chapterName = toc.label.trim();
         addTocToList(chapterName, toc.href);
+        if(currentBookObj.bookmarkEX.href == ""){
+          currentBookObj.bookmarkEX.href = toc.href;
+        }
 
         // getContent(toc.href);
         
@@ -409,31 +416,20 @@ function handleDetailPageShown(event) {
   });
 }
 
-function getContent(item){
-  var section = currentBookEpub.spine.get(item);
-  console.log(section);
-  section.render().then(h => {
-    console.log(h);
-  });
-  section.load().then(html => {
-    console.log(html);
-  });
-}
-
-function addTocToList(chapterName, chapterCFI){
+function addTocToList(chapterName, href){
   const row = tocList.insertRow();
   const chapterCell = row.insertCell(0);
   const progressCell = row.insertCell(1);
   
   chapterCell.textContent = chapterName;
   // todo change to per
-  progressCell.textContent = chapterCFI;
+  progressCell.textContent = href;
   
 
   [chapterCell, progressCell].forEach(cell => {
     cell.style.cursor = 'pointer';
     cell.addEventListener('click', () => {
-      navigateToChapterFromHref(chapterCFI);
+      navigateToChapter2(href, 0);
     });
   });
 }
@@ -450,23 +446,25 @@ function addBookmarkToList(bookmark){
   checkboxCell.appendChild(checkbox);
   chapterCell.textContent = bookmark.chapter;
   // todo change to percentage
-  progressCell.textContent = bookmark.progress;
+  progressCell.textContent = JSON.stringify(bookmark.progress);
   createTimeCell.textContent = bookmark.createTime;
 
   [chapterCell, progressCell, createTimeCell].forEach(cell => {
     cell.style.cursor = 'pointer';
     cell.addEventListener('click', () => {
-      navigateToChapterFromHref(bookmark.progress);
+      navigateToChapter2(bookmark.progress.href, bookmark.progress.offset);
     })
   });
 }
 
 async function getCfiFromHref(href) {
-  const id= href.split('#')[1]
-  const item = currentBookEpub.spine.get(href)
-  await item.load(currentBookEpub.load.bind(currentBookEpub))
-  const el = id ? item.document.getElementById(id) : item.document.body
-  return item.cfiFromElement(el)
+  const id= href.split('#')[1];
+  var sec = currentBookEpub.spine.get(href);
+  sec.load(currentBookEpub.load.bind(currentBookEpub)).then(html => {
+    const el = id ? html.document.getElementById(id) : html.document.body;
+    console.log(html.cfiFromElement(el));
+    return html.cfiFromElement(el);
+  });
 }
 
 // todo无法正确找到
@@ -496,6 +494,13 @@ function getChapterFromCFI(cfi){
   return matchedToc[0].label.trim();
 }
 
+function getChapterFromCFI2(cfi){
+  let spineItem = currentBookEpub.spine.get(cfi);
+  let navItem = currentBookEpub.navigation.get(spineItem.href);
+  return navItem.label.trim();
+}
+
+// deprecated
 // 让特殊书签跳转到对应index（特殊书签，目录，书签）
 function navigateToChapter(cfi){
   currentBookObj.bookmarkEX = cfi;
@@ -503,14 +508,23 @@ function navigateToChapter(cfi){
   // todo 其他
 }
 
-function navigateToChapterFromHref(href){
+// 未能弄清楚如何用cfi控制位置，打算通过href+自定义offset定位
+function navigateToChapter2(href, offset){
   // getCfiFromHref(href).then(cfi => {
   //   currentBookObj.bookmarkEX = cfi;
   // });
-  currentBookObj.bookmarkEX = href;
+  currentBookObj.bookmarkEX.href = href;
+  currentBookObj.bookmarkEX.offset = offset;
+  chrome.storage.local.get({ books: []}, function (result){
+    var tmp = result.books;
+    var index = tmp.findIndex(e => e.bookName == currentBookObj.bookName);
+    tmp[index] = currentBookObj;
+    chrome.storage.local.set({books: tmp});
+  });
   chrome.storage.local.set({ globalReadStatus: true });
   var sec = currentBookEpub.spine.get(href)
   sec.load(currentBookEpub.load.bind(currentBookEpub)).then(h => {
+    // var content = h.body.textContent.trim();
     console.log(h);
   });
 
@@ -531,3 +545,13 @@ function handleMouseOut(event) {
   }
 }
 
+chrome.runtime.onMessage.addListener((msg, sender, response) => {
+  if (msg.action != "modifyRendition"){
+    return;
+  }
+  console.log("popup render");
+  var div = document.querySelector("currentRendition");
+  if(div){
+    currentBookEpub.renderTo(div);
+  }
+});
