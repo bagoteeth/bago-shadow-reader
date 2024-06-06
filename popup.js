@@ -403,11 +403,53 @@ function handleDetailPageShown(event) {
         
       });
 
-      // 这个会打印全文
+
+
+      for(let i = 0;;i++){
+        let sec = currentBookEpub.spine.get(i);
+          if (!sec){
+            break;
+          }
+          sec.load(currentBookEpub.load.bind(currentBookEpub)).then(html => {
+            // 取所有文本，提取前100字符，中英都算1字符
+            try{
+              var $div = $('<div>').html(html)
+              var title = $div.find('title').text() || '未找到标题'
+              var bodyText = $div.find('body').text().replace(/\n\s*\n/g, '\n').trim()
+
+              console.log('网页标题：', title);
+              console.log('body中的所有文字：', bodyText);
+              var result100 = ''
+              var charCount = 0
+              for(let j=0;j<bodyText.length;j++){
+                
+                if (bodyText.charAt(j) == ' '){
+                  continue
+                }
+                result100 += bodyText.charAt(j)
+                if (bodyText.charAt(j).trim() !== ''){
+                  charCount++
+                }
+                
+                if (charCount > 100){
+                  break
+                }
+              }
+              console.log('前100字符：', result100);
+            }
+            catch (error) {
+              console.error('处理HTML内容时出现错误:', error);
+            }
+          })
+      }
+
       // currentBookEpub.spine.each((item) => {
-      //   item.load(currentBookEpub.load.bind(currentBookEpub)).then((contents) => {
-      //     console.log(contents);
-      //   });
+
+        // console.log(item);
+
+        // item.load(currentBookEpub.load.bind(currentBookEpub)).then((contents) => {
+        //   console.log(contents);
+        // });
       // });
 
     });
