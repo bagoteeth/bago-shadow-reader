@@ -25,7 +25,6 @@
   <div id="fileListContainer">
     <button id="addButton">新增</button>
     <button id="deleteButton">删除</button>
-    <button id="exitButton">退出阅读状态</button>
     <table id="fileList">
       <tr>
         <th><input type="checkbox" id="selectAll">全选</th>
@@ -56,7 +55,7 @@
           <thead>
             <tr>
               <th>章节</th>
-              <th>进度</th>
+              <!-- <th>进度</th> -->
             </tr>
           </thead>
           <tbody>
@@ -95,6 +94,18 @@
         <button id="textSizeModifyButton">修改</button>
         <input type="number" id="textSizeInput" disabled>
         <button id="textSizeSaveButton">保存</button>
+      </div>
+    </details>
+  </div>
+  <div id="ReadingControllerContainer">
+    <details>
+      <summary id="rcSummary">阅读控制</summary>
+      <div>
+        <button id="lastChapterButton">上一章</button>
+        <button id="lastPageButton">上一页</button>
+        <button id="exitButton">退出阅读状态</button>
+        <button id="nextPageButton">下一页</button>
+        <button id="nextChapterButton">下一章</button>
       </div>
     </details>
   </div>

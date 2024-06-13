@@ -63,6 +63,15 @@ th {
   border-radius: 5px;
 }
 
+#ReadingControllerContainer {
+  width: 280px;
+  margin: 10px;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #888888;
+  border-radius: 5px;
+}
+
 #overviewContainer {
   width: 280px;
   margin: 10px;

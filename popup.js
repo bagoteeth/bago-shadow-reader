@@ -8,7 +8,7 @@ const readingTimeTotal = document.getElementById('readingTimeTotal');
 // fileListContainer
 const addButton = document.getElementById('addButton');
 const deleteButton = document.getElementById('deleteButton');
-const exitButton = document.getElementById('exitButton');
+
 const selectAll = document.getElementById('selectAll');
 const fileList = document.getElementById('fileList');
 // detailPageContainer
@@ -24,6 +24,12 @@ const addBookmarkButton = document.getElementById('addBookmarkButton');
 const deleteBookmarkButton = document.getElementById('deleteBookmarkButton');
 const continueReadingButton = document.getElementById('continueReadingButton');
 const detailPageCloseButton = document.getElementById('closeButton');
+// ReadingControllerContainer
+const exitButton = document.getElementById('exitButton');
+const lastChapterButton = document.getElementById('lastChapterButton');
+const lastPageButton = document.getElementById('lastPageButton');
+const nextPageButton = document.getElementById('nextPageButton');
+const nextChapterButton = document.getElementById('nextChapterButton');
 // textSizeContainer
 const textSizeModifyButton = document.getElementById('textSizeModifyButton');
 const textSizeInput = document.getElementById('textSizeInput');
@@ -31,6 +37,7 @@ const textSizeSaveButton = document.getElementById('textSizeSaveButton');
 
 var currentBookObj;
 var currentBookEpub;
+var currentTextSize;
 
 document.addEventListener('DOMContentLoaded', function () {
   initOverview();
@@ -39,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
   addButton.addEventListener('click', handleAddButtonClick);
   deleteButton.addEventListener('click', handleDeleteButtonClick);
-  exitButton.addEventListener('click', handleExitButton);
   selectAll.addEventListener('change', handleSelectAllChange);
   fileList.addEventListener('click', handleDetailPageShown);
   fileList.addEventListener('mouseover', handleMouseOver);
@@ -51,14 +57,15 @@ document.addEventListener('DOMContentLoaded', function () {
   continueReadingButton.addEventListener('click', handleContinueReading);
   detailPageCloseButton.addEventListener('click', handleCloseDetailPageClick);
 
+  exitButton.addEventListener('click', handleExitButton);
+  lastChapterButton.addEventListener('click', handleLastChapterButton);
+  lastPageButton.addEventListener('click', handleLastPageButton);
+  nextPageButton.addEventListener('click', handleNextPageButton);
+  nextChapterButton.addEventListener('click', handleNextChapterButton);
+
   textSizeModifyButton.addEventListener('click', handleTextSizeModifyButtonClick);
   textSizeSaveButton.addEventListener('click', handleTextSizeSaveButtonClick);
 });
-
-function handleExitButton() {
-  chrome.storage.local.set({ globalReadStatus: false });
-  // todo 停止计时
-}
 
 function handleAddBookmark(){
   // todo判断在阅读状态
@@ -102,6 +109,27 @@ function handleContinueReading(){
   navigateToChapter2(currentBookObj.bookmarkEX.href, currentBookObj.bookmarkEX.offset);
 }
 
+function handleExitButton() {
+  chrome.storage.local.set({ globalReadStatus: false });
+  // todo 停止计时
+}
+
+function handleLastChapterButton() {
+
+}
+
+function handleLastPageButton() {
+
+}
+
+function handleNextPageButton() {
+
+}
+
+function handleNextChapterButton() {
+
+}
+
 function handleTextSizeModifyButtonClick() {
   textSizeInput.removeAttribute('disabled');
   textSizeInput.focus;
@@ -110,6 +138,7 @@ function handleTextSizeModifyButtonClick() {
 function handleTextSizeSaveButtonClick() {
   const newSize = parseInt(textSizeInput.value);
   chrome.storage.local.set({ textSize: newSize });
+  currentTextSize = newSize;
 
   textSizeInput.setAttribute('disabled', true);
 }
@@ -145,6 +174,7 @@ chrome.storage.local.get('wordCountTotal', function (data) {
 function initializeTextSize() {
   chrome.storage.local.get({ textSize: 200 }, function (data) {
     textSizeInput.value = data.textSize;
+    currentTextSize = data.textSize;
   });
 }
 
@@ -356,102 +386,21 @@ function handleDetailPageShown(event) {
     tocList.innerHTML = '';
     currentBookObj.bookmarksList.forEach(bookmark => addBookmarkToList(bookmark));
     //加载书名，作者，目录
-    // fixme
     currentBookEpub = ePub(base642Blob(currentBookObj.base64));
-    // currentBookEpub = ePub("https://s3.amazonaws.com/epubjs/books/moby-dick/OPS/package.opf");
 
     currentBookEpub.loaded.metadata.then(meta => {
       detailPageFileName.textContent = meta.title;
       detailPageWriter.textContent = meta.creator;
     });
 
-
-
     currentBookEpub.ready.then(() => { 
       currentBookEpub.navigation.forEach(toc => {
-        // console.log(toc);
         const chapterName = toc.label.trim();
         addTocToList(chapterName, toc.href);
         if(currentBookObj.bookmarkEX.href == ""){
           currentBookObj.bookmarkEX.href = toc.href;
         }
-
-        // getContent(toc.href);
-        
-        // getCfiFromHref(toc.href).then(chapterCFI => {
-        //   console.log(toc.href);
-        //   console.log(chapterCFI);
-        //   addTocToList(chapterName, chapterCFI);
-        // });
-
-        // currentBookEpub.opened.then(() => {
-        //   display(3);
-        // });
-
-        // display(toc.href);
-
-        // function display(item){
-        //   var section = currentBookEpub.spine.get(item);
-        //   if(section){
-        //     section.render().then(html => {
-        //       console.log(html);
-        //     });
-        //   }
-        //   return section;
-        // }
-
-        
       });
-
-
-
-      for(let i = 0;;i++){
-        let sec = currentBookEpub.spine.get(i);
-          if (!sec){
-            break;
-          }
-          sec.load(currentBookEpub.load.bind(currentBookEpub)).then(html => {
-            // 取所有文本，提取前100字符，中英都算1字符
-            try{
-              var $div = $('<div>').html(html)
-              var title = $div.find('title').text() || '未找到标题'
-              var bodyText = $div.find('body').text().replace(/\n\s*\n/g, '\n').trim()
-
-              console.log('网页标题：', title);
-              console.log('body中的所有文字：', bodyText);
-              var result100 = ''
-              var charCount = 0
-              for(let j=0;j<bodyText.length;j++){
-                
-                if (bodyText.charAt(j) == ' '){
-                  continue
-                }
-                result100 += bodyText.charAt(j)
-                if (bodyText.charAt(j).trim() !== ''){
-                  charCount++
-                }
-                
-                if (charCount > 100){
-                  break
-                }
-              }
-              console.log('前100字符：', result100);
-            }
-            catch (error) {
-              console.error('处理HTML内容时出现错误:', error);
-            }
-          })
-      }
-
-      // currentBookEpub.spine.each((item) => {
-
-        // console.log(item);
-
-        // item.load(currentBookEpub.load.bind(currentBookEpub)).then((contents) => {
-        //   console.log(contents);
-        // });
-      // });
-
     });
     
     detailPage.style.display = 'block';
@@ -461,14 +410,14 @@ function handleDetailPageShown(event) {
 function addTocToList(chapterName, href){
   const row = tocList.insertRow();
   const chapterCell = row.insertCell(0);
-  const progressCell = row.insertCell(1);
+  // const progressCell = row.insertCell(1);
   
   chapterCell.textContent = chapterName;
-  // todo change to per
-  progressCell.textContent = href;
+
+  // progressCell.textContent = href;
   
 
-  [chapterCell, progressCell].forEach(cell => {
+  [chapterCell].forEach(cell => {
     cell.style.cursor = 'pointer';
     cell.addEventListener('click', () => {
       navigateToChapter2(href, 0);
@@ -550,13 +499,11 @@ function navigateToChapter(cfi){
   // todo 其他
 }
 
-// 未能弄清楚如何用cfi控制位置，打算通过href+自定义offset定位
+// 未能弄清楚如何用cfi控制位置，通过href/index+自定义offset定位
 function navigateToChapter2(href, offset){
-  // getCfiFromHref(href).then(cfi => {
-  //   currentBookObj.bookmarkEX = cfi;
-  // });
   currentBookObj.bookmarkEX.href = href;
   currentBookObj.bookmarkEX.offset = offset;
+  // bookmarkex变化，进入阅读模式。存storage
   chrome.storage.local.get({ books: []}, function (result){
     var tmp = result.books;
     var index = tmp.findIndex(e => e.bookName == currentBookObj.bookName);
@@ -564,10 +511,40 @@ function navigateToChapter2(href, offset){
     chrome.storage.local.set({books: tmp});
   });
   chrome.storage.local.set({ globalReadStatus: true });
-  var sec = currentBookEpub.spine.get(href)
-  sec.load(currentBookEpub.load.bind(currentBookEpub)).then(h => {
-    // var content = h.body.textContent.trim();
-    console.log(h);
+
+  var sec = currentBookEpub.spine.get(href);
+  if (!sec){
+    console.log('section not exists: ', href);
+    return;
+  }
+  sec.load(currentBookEpub.load.bind(currentBookEpub)).then(html => {
+    // 取所有文本，提取前size字符
+    try{
+      var $div = $('<div>').html(html);
+      var bodyText = $div.find('body').text().replace(/\n\s*\n/g, '\n').trim();
+
+      var result = '';
+      var charCount = 0;
+      for(let j=offset; j<bodyText.length;j++){
+        // 排除空格，连续多个换行只留1个
+        if (bodyText.charAt(j) == ' '){
+          continue;
+        }
+        result += bodyText.charAt(j);
+        if (bodyText.charAt(j).trim() !== ''){
+          charCount++;
+        }
+        
+        if (charCount > currentTextSize){
+          break;
+        }
+      }
+      console.log(`从${offset}开始的${currentTextSize}字符：
+      ${result}`);
+    }
+    catch (error) {
+      console.error('处理HTML内容时出现错误:', error);
+    }
   });
 
   // todo 其他
