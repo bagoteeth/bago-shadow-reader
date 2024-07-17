@@ -38,7 +38,7 @@ function navigateToChapter2(href, offset) {
         tmp[index] = currentBookObj;
         chrome.storage.local.set({ books: tmp });
     });
-    chrome.storage.local.set({ globalReadStatus: true });
+    enableReadStatus();
 
     var sec = currentBookEpub.spine.get(href);
     if (!sec) {
@@ -68,7 +68,7 @@ function navigateToChapter2(href, offset) {
                 }
             }
             //todo 先log，之后改到嵌入页面；单本和总计时也在那时开始
-
+            startTimer();
             console.log(`从${offset}开始的${currentTextSize}字符：
         ${result}`);
         }
@@ -76,8 +76,6 @@ function navigateToChapter2(href, offset) {
             console.error('处理HTML内容时出现错误:', error);
         }
     });
-
-    // todo 其他
 }
 
 function base642Blob(bs64) {
@@ -95,6 +93,9 @@ function handleDetailPageShown(event) {
     if (!(event.target && event.target.tagName === 'TD' && event.target.parentElement.rowIndex > 0 && event.target.cellIndex === 1)) {
         return;
     }
+    // 如果之前在读其他书，要先保存重置相关记录
+    handleExitReading();
+    
     const bookName = event.target.textContent.trim();
     chrome.storage.local.get({ books: [] }, function (result) {
         currentBookObj = result.books.find(book => {
@@ -103,6 +104,7 @@ function handleDetailPageShown(event) {
         // 加载阅读时间，状态，书签
         detailPageStatus.textContent = currentBookObj.readStatus;
         detailPageTime.textContent = currentBookObj.readTime;
+        currentReadingTime = currentBookObj.readTime;
         bookmarksList.innerHTML = '';
         tocList.innerHTML = '';
         currentBookObj.bookmarksList.forEach(bookmark => addBookmarkToList(bookmark));

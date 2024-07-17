@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function handleAddBookmark() {
-    // todo判断在阅读状态
     const bookmark = {
         chapter: currentBookEpub.navigation.get(currentBookObj.bookmarkEX.href).label.trim(),
         progress: currentBookObj.bookmarkEX,
@@ -23,12 +22,7 @@ function handleAddBookmark() {
     // 全局变量更新
     currentBookObj.bookmarksList.push(bookmark);
     // 持久化
-    chrome.storage.local.get({ books: [] }, function (result) {
-        var tmp = result.books;
-        var index = tmp.findIndex(e => e.bookName == currentBookObj.bookName);
-        tmp[index] = currentBookObj;
-        chrome.storage.local.set({ books: tmp });
-    });
+    saveCurrentBookObj();
 }
 
 function handleDeleteBookmark() {
@@ -39,12 +33,7 @@ function handleDeleteBookmark() {
             currentBookObj.bookmarksList.splice(i, 1);
         }
     }
-    chrome.storage.local.get({ books: [] }, function (result) {
-        var tmp = result.books;
-        var index = tmp.findIndex(e => e.bookName == currentBookObj.bookName);
-        tmp[index] = currentBookObj;
-        chrome.storage.local.set({ books: tmp });
-    });
+    saveCurrentBookObj();
 }
 
 function handleSelectAllBookmarksChange() {

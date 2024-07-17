@@ -5,13 +5,6 @@
 // fileListContainer
 // detailPageContainer
 
-/* 当前持久化变量
-books
-textSize
-globalReadStatus
-readingTimeTotal
-*/
-
 // deprecated
 // 每个文件调用一次
 // function handleFileInput(fe) {
@@ -111,7 +104,6 @@ readingTimeTotal
 // function navigateToChapter(cfi){
 //   currentBookObj.bookmarkEX = cfi;
 //   chrome.storage.local.set({ globalReadStatus: true });
-//   // todo 其他
 // }
 
 // 未能弄清楚如何用cfi控制位置，通过href/index+自定义offset定位

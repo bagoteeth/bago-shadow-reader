@@ -2,16 +2,22 @@
 
 const readingTimeTotal = document.getElementById('readingTimeTotal');
 
-var currentReadingTimeTotal;
-
 document.addEventListener('DOMContentLoaded', function () {
     initOverview();
 });
 
+/* 当前持久化变量
+books
+textSize
+dbReadingTimeTotal
+globalReadStatus
+*/
+
 function initOverview() {
-    chrome.storage.local.get('readingTimeTotal', function (data) {
-        const previousSize = data.readingTimeTotal || 0;
-        readingTimeTotal.value = data.readingTimeTotal;
+    chrome.storage.local.get('dbReadingTimeTotal', function (data) {
+        const timeTotal = data.dbReadingTimeTotal || 0;
+        readingTimeTotal.textContent = timeTotal;
+        globalReadingTimeTotal = timeTotal;
     });
     // chrome.storage.local.get('wordCountTotal', function (data) {
     //   const previousSize = data.wordCountTotal || 0;

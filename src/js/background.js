@@ -11,9 +11,9 @@ chrome.runtime.onInstalled.addListener(function () {
         const previousSize = data.textSize || 200;
         chrome.storage.local.set({ textSize: previousSize });
     });
-    chrome.storage.local.get('readingTimeTotal', function (data) {
-        const previousSize = data.readingTimeTotal || 0;
-        chrome.storage.local.set({ readingTimeTotal: previousSize });
+    chrome.storage.local.get('dbReadingTimeTotal', function (data) {
+        const previousSize = data.dbReadingTimeTotal || 0;
+        chrome.storage.local.set({ dbReadingTimeTotal: previousSize });
     });
     chrome.storage.local.get('wordCountTotal', function (data) {
         const previousSize = data.wordCountTotal || 0;
