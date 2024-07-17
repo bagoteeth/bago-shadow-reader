@@ -5,18 +5,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bago Epub</title>
-  <link rel="stylesheet" href="popup.css">
-  <script src="libs/jszip.min.js"></script>
-  <script src="libs/epub.min.js"></script>
-  <script src="libs/jquery-3.7.1.min.js"></script>
+  <link rel="stylesheet" href="../css/popup.css">
+  <script src="../../libs/jszip.min.js"></script>
+  <script src="../../libs/epub.min.js"></script>
+  <script src="../../libs/jquery-3.7.1.min.js"></script>
 </head>
 
 <body>
   <div id="overviewContainer">
-    <div class="infoItem">
+    <!-- <div class="infoItem">
       <span class="infoLabel">阅读字数:</span>
       <span id="wordCountTotal"></span>
-    </div>
+    </div> -->
     <div class="infoItem">
       <span class="infoLabel">阅读时长:</span>
       <span id="readingTimeTotal"></span>
@@ -87,16 +87,6 @@
       <button id="closeButton">关闭页面</button>
     </div>
   </div>
-  <div id="textSizeContainer">
-    <details>
-      <summary id="textSizeSummary">单次显示字数</summary>
-      <div>
-        <button id="textSizeModifyButton">修改</button>
-        <input type="number" id="textSizeInput" disabled>
-        <button id="textSizeSaveButton">保存</button>
-      </div>
-    </details>
-  </div>
   <div id="ReadingControllerContainer">
     <details>
       <summary id="rcSummary">阅读控制</summary>
@@ -107,9 +97,26 @@
         <button id="nextPageButton">下一页</button>
         <button id="nextChapterButton">下一章</button>
       </div>
+      <div id="textSizeContainer">
+        <details>
+          <summary id="textSizeSummary">单次显示字数</summary>
+          <div>
+            <button id="textSizeModifyButton">修改</button>
+            <input type="number" id="textSizeInput" disabled>
+            <button id="textSizeSaveButton">保存</button>
+          </div>
+        </details>
+      </div>
     </details>
   </div>
-  <script src="popup.js"></script>
+  <script src="../js/popup.js"></script>
+  <script src="../js/textSize.js"></script>
+  <script src="../js/overview.js"></script>
+  <script src="../js/readingControl.js"></script>
+  <script src="../js/booklist.js"></script>
+  <script src="../js/detailPage.js"></script>
+  <script src="../js/detailPageBookMark.js"></script>
+  <script src="../js/detailPageToc.js"></script>
 </body>
 
 </html>

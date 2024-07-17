@@ -9,16 +9,16 @@
         "activeTab"
     ],
     "icons": {
-        "16": "btn16.png",
-        "48": "btn48.png",
-        "128": "btn128.png"
+        "16": "src/imgs/btn16.png",
+        "48": "src/imgs/btn48.png",
+        "128": "src/imgs/btn128.png"
     },
     "action": {
-        "default_popup": "popup.html",
+        "default_popup": "src/html/popup.html",
         "default_icon": {
-            "16": "btn16.png",
-            "48": "btn48.png",
-            "128": "btn128.png"
+            "16": "src/imgs/btn16.png",
+            "48": "src/imgs/btn48.png",
+            "128": "src/imgs/btn128.png"
         },
         "default_title": "Bago click me"
     },
@@ -34,6 +34,6 @@
         }
     },
     "background": {
-        "service_worker": "background.js"
+        "service_worker": "src/js/background.js"
     }
 }

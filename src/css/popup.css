@@ -80,7 +80,8 @@ th {
   border-radius: 5px;
 }
 
-#textSizeSummary {
+#textSizeSummary,
+#rcSummary {
   font-size: large;
   margin: 10px;
   cursor: pointer;
