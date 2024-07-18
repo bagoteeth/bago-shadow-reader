@@ -12,17 +12,24 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function handleAddBookmark() {
-    const bookmark = {
-        chapter: currentBookEpub.navigation.get(currentBookObj.bookmarkEX.href).label.trim(),
-        progress: currentBookObj.bookmarkEX,
-        createTime: new Date().toLocaleString()
-    }
-    // 页面更新
-    addBookmarkToList(bookmark);
-    // 全局变量更新
-    currentBookObj.bookmarksList.push(bookmark);
-    // 持久化
-    saveCurrentBookObj();
+    chrome.storage.local.get('globalReadStatus', function (data) {
+        if (!data.globalReadStatus) {
+            return
+        }
+        // bookmark结构
+        const bookmark = {
+            chapter: currentBookEpub.navigation.get(currentBookObj.bookmarkEX.href).label.trim(),
+            // 此时经过navi2，bookmarkex的全文字数应已被赋值
+            progress: currentBookObj.bookmarkEX,
+            createTime: new Date().toLocaleString()
+        }
+        // 页面更新
+        addBookmarkToList(bookmark);
+        // 全局变量更新
+        currentBookObj.bookmarksList.push(bookmark);
+        // 持久化
+        saveCurrentBookObj();
+    });
 }
 
 function handleDeleteBookmark() {
@@ -54,10 +61,16 @@ function addBookmarkToList(bookmark) {
     checkbox.type = 'checkbox';
     checkboxCell.appendChild(checkbox);
     chapterCell.textContent = bookmark.chapter;
-    // todo change to percentage
-    progressCell.textContent = JSON.stringify(bookmark.progress);
+    // 占当前章节百分比
+    if (bookmark.progress.currentChapterCount == 0){
+        progressCell.textContent = "chapter count error";
+    }
+    else{
+        var percent = (bookmark.progress.offset / bookmark.progress.currentChapterCount) * 100
+        progressCell.textContent = percent;
+    }
     createTimeCell.textContent = bookmark.createTime;
-
+    
     [chapterCell, progressCell, createTimeCell].forEach(cell => {
         cell.style.cursor = 'pointer';
         cell.addEventListener('click', () => {

@@ -29,15 +29,6 @@ function handleCloseDetailPageClick() {
 }
 
 function navigateToChapter2(href, offset) {
-    currentBookObj.bookmarkEX.href = href;
-    currentBookObj.bookmarkEX.offset = offset;
-    // bookmarkex变化，进入阅读模式。存storage
-    chrome.storage.local.get({ books: [] }, function (result) {
-        var tmp = result.books;
-        var index = tmp.findIndex(e => e.bookName == currentBookObj.bookName);
-        tmp[index] = currentBookObj;
-        chrome.storage.local.set({ books: tmp });
-    });
     enableReadStatus();
 
     var sec = currentBookEpub.spine.get(href);
@@ -67,8 +58,14 @@ function navigateToChapter2(href, offset) {
                     break;
                 }
             }
-            //todo 先log，之后改到嵌入页面；单本和总计时也在那时开始
+            //todo 先log，之后改到嵌入页面；单本和总计时也在那时开始;bookmarkex修改也在这
             startTimer();
+            // bookmarkex变化，进入阅读模式。存storage
+            currentBookObj.bookmarkEX.href = href;
+            currentBookObj.bookmarkEX.offset = offset;
+            currentBookObj.bookmarkEX.currentChapterCount = bodyText.length;
+            saveCurrentBookObj();
+
             console.log(`从${offset}开始的${currentTextSize}字符：
         ${result}`);
         }
@@ -95,7 +92,7 @@ function handleDetailPageShown(event) {
     }
     // 如果之前在读其他书，要先保存重置相关记录
     handleExitReading();
-    
+
     const bookName = event.target.textContent.trim();
     chrome.storage.local.get({ books: [] }, function (result) {
         currentBookObj = result.books.find(book => {

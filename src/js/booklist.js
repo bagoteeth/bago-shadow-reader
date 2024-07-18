@@ -104,6 +104,7 @@ function handleFileInputChange(event) {
                     bookmarkEX: {
                         href: "",
                         offset: 0,
+                        currentChapterCount: 0
                     },
                     // 文件本体
                     base64: bs64,
