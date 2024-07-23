@@ -14,6 +14,7 @@ function addTocToList(chapterName, href) {
     [chapterCell].forEach(cell => {
         cell.style.cursor = 'pointer';
         cell.addEventListener('click', () => {
+            enableReadStatus();
             navigateToChapter2(href, 0);
         });
     });

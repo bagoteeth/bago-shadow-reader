@@ -62,18 +62,19 @@ function addBookmarkToList(bookmark) {
     checkboxCell.appendChild(checkbox);
     chapterCell.textContent = bookmark.chapter;
     // 占当前章节百分比
-    if (bookmark.progress.currentChapterCount == 0){
+    if (bookmark.progress.currentChapterCount == 0) {
         progressCell.textContent = "chapter count error";
     }
-    else{
+    else {
         var percent = (bookmark.progress.offset / bookmark.progress.currentChapterCount) * 100
         progressCell.textContent = percent;
     }
     createTimeCell.textContent = bookmark.createTime;
-    
+
     [chapterCell, progressCell, createTimeCell].forEach(cell => {
         cell.style.cursor = 'pointer';
         cell.addEventListener('click', () => {
+            enableReadStatus();
             navigateToChapter2(bookmark.progress.href, bookmark.progress.offset);
         });
     });

@@ -14,6 +14,7 @@ const detailPageCloseButton = document.getElementById('closeButton');
 
 var currentBookObj;
 var currentBookEpub;
+var currentBookToclist;
 
 document.addEventListener('DOMContentLoaded', function () {
     continueReadingButton.addEventListener('click', handleContinueReading);
@@ -21,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function handleContinueReading() {
+    enableReadStatus();
     navigateToChapter2(currentBookObj.bookmarkEX.href, currentBookObj.bookmarkEX.offset);
 }
 
@@ -29,7 +31,6 @@ function handleCloseDetailPageClick() {
 }
 
 function navigateToChapter2(href, offset) {
-    enableReadStatus();
 
     var sec = currentBookEpub.spine.get(href);
     if (!sec) {
@@ -39,35 +40,8 @@ function navigateToChapter2(href, offset) {
     sec.load(currentBookEpub.load.bind(currentBookEpub)).then(html => {
         // 取所有文本，提取前size字符
         try {
-            var $div = $('<div>').html(html);
-            var bodyText = $div.find('body').text().replace(/\n\s*\n/g, '\n').trim();
-
-            var result = '';
-            var charCount = 0;
-            for (let j = offset; j < bodyText.length; j++) {
-                // 排除空格，连续多个换行只留1个
-                if (bodyText.charAt(j) == ' ') {
-                    continue;
-                }
-                result += bodyText.charAt(j);
-                if (bodyText.charAt(j).trim() !== '') {
-                    charCount++;
-                }
-
-                if (charCount > currentTextSize) {
-                    break;
-                }
-            }
-            //todo 先log，之后改到嵌入页面；单本和总计时也在那时开始;bookmarkex修改也在这
-            startTimer();
-            // bookmarkex变化，进入阅读模式。存storage
-            currentBookObj.bookmarkEX.href = href;
-            currentBookObj.bookmarkEX.offset = offset;
-            currentBookObj.bookmarkEX.currentChapterCount = bodyText.length;
-            saveCurrentBookObj();
-
-            console.log(`从${offset}开始的${currentTextSize}字符：
-        ${result}`);
+            var bodyText = html2epubText(html);
+            showEpubText(bodyText, href, offset);
         }
         catch (error) {
             console.error('处理HTML内容时出现错误:', error);
@@ -116,6 +90,7 @@ function handleDetailPageShown(event) {
         currentBookEpub.ready.then(() => {
             currentBookEpub.navigation.forEach(toc => {
                 const chapterName = toc.label.trim();
+                currentBookToclist.push(toc.href);
                 addTocToList(chapterName, toc.href);
                 if (currentBookObj.bookmarkEX.href == "") {
                     currentBookObj.bookmarkEX.href = toc.href;
@@ -125,4 +100,43 @@ function handleDetailPageShown(event) {
 
         detailPage.style.display = 'block';
     });
+}
+
+function html2epubText(html) {
+    var $div = $('<div>').html(html);
+    var bodyText = $div.find('body').text().replace(/\n\s*\n/g, '\n').trim();
+    var result = '';
+    for (let j = offset; j < bodyText.length; j++) {
+        // 排除空格，连续多个换行只留1个
+        if (bodyText.charAt(j) == ' ') {
+            continue;
+        }
+        result += bodyText.charAt(j);
+    }
+    return result;
+}
+
+function showEpubText(bodyText, href, offset) {
+    var result = '';
+    var charCount = 0;
+
+    for (let j = offset; j < bodyText.length; j++) {
+        result += bodyText.charAt(j);
+        charCount++;
+
+        if (charCount >= currentTextSize) {
+            break;
+        }
+    }
+
+    //todo 先log，之后改到嵌入页面；单本和总计时也在那时开始;bookmarkex修改也在这
+    startTimer();
+    // bookmarkex变化，进入阅读模式。存storage
+    currentBookObj.bookmarkEX.href = href;
+    currentBookObj.bookmarkEX.offset = offset;
+    currentBookObj.bookmarkEX.currentChapterCount = bodyText.length;
+    saveCurrentBookObj();
+
+    console.log(`从${offset}开始的${currentTextSize}字符：
+        ${result}`);
 }

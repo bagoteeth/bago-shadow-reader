@@ -29,32 +29,59 @@ function handleExitReading() {
 
 function handleLastChapterButton() {
     chrome.storage.local.get('globalReadStatus', function (data) {
-        if (!data.globalReadStatus){
-            return
+        if (!data.globalReadStatus) {
+            return;
         }
+        var targetHref = getLastChapter(currentBookObj.bookmarkEX.href);
+        navigateToChapter2(targetHref, 0);
     });
 }
 
 function handleLastPageButton() {
     chrome.storage.local.get('globalReadStatus', function (data) {
-        if (!data.globalReadStatus){
-            return
+        if (!data.globalReadStatus) {
+            return;
+        }
+        if (currentBookObj.bookmarkEX.offset == 0) {
+            var targetHref = getLastChapter(currentBookObj.bookmarkEX.href);
+            navigateToChapter2(targetHref, 0);
+        }
+        else {
+            var targetOffset = currentBookObj.bookmarkEX.offset - currentTextSize;
+            if (targetOffset < 0) {
+                targetOffset = 0;
+            }
+            navigateToChapter2(currentBookObj.bookmarkEX.href, targetOffset);
         }
     });
 }
 
 function handleNextPageButton() {
     chrome.storage.local.get('globalReadStatus', function (data) {
-        if (!data.globalReadStatus){
-            return
+        if (!data.globalReadStatus) {
+            return;
+        }
+        if (currentBookObj.bookmarkEX.offset + currentTextSize >= currentBookObj.bookmarkEX.currentChapterCount - 1) {
+            var targetHref = getNextChapter(currentBookObj.bookmarkEX.href);
+            if (targetHref != currentBookObj.bookmarkEX.href) {
+                navigateToChapter2(targetHref, 0);
+            }
+        }
+        else {
+            var targetOffset = currentBookObj.bookmarkEX.offset + currentTextSize;
+            navigateToChapter2(currentBookObj.bookmarkEX.href, targetOffset);
         }
     });
 }
 
 function handleNextChapterButton() {
     chrome.storage.local.get('globalReadStatus', function (data) {
-        if (!data.globalReadStatus){
-            return
+        if (!data.globalReadStatus) {
+            return;
+        }
+        var targetHref = getNextChapter(currentBookObj.bookmarkEX.href);
+        if (targetHref != currentBookObj.bookmarkEX.href) {
+            navigateToChapter2(targetHref, 0);
         }
     });
 }
@@ -95,4 +122,32 @@ function saveCurrentBookObj() {
         tmp[index] = currentBookObj;
         chrome.storage.local.set({ books: tmp });
     });
+}
+
+function getLastChapter(href) {
+    for (let i = 0; i < currentBookToclist.length; i++) {
+        if (currentBookToclist[i] == href) {
+            if (i == 0) {
+                return href;
+            }
+            else {
+                return currentBookToclist[i - 1];
+            }
+        }
+    }
+    console.log("invalid href");
+}
+
+function getNextChapter(href) {
+    for (let i = 0; i < currentBookToclist.length; i++) {
+        if (currentBookToclist[i] == href) {
+            if (i == currentBookToclist.length) {
+                return href;
+            }
+            else {
+                return currentBookToclist[i + 1];
+            }
+        }
+    }
+    console.log("invalid href");
 }
