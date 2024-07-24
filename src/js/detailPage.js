@@ -87,6 +87,12 @@ function handleDetailPageShown(event) {
             detailPageWriter.textContent = meta.creator;
         });
 
+        if (currentBookObj.bookmarkEX.href == "") {
+            continueReadingButton.textContent = "开始阅读";
+        } else {
+            continueReadingButton.textContent = "继续阅读";
+        }
+
         currentBookEpub.ready.then(() => {
             currentBookEpub.navigation.forEach(toc => {
                 const chapterName = toc.label.trim();
