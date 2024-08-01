@@ -135,13 +135,20 @@ function showEpubText(bodyText, href, offset) {
         }
     }
 
-    //todo 先log，之后改到嵌入页面；单本和总计时也在那时开始;bookmarkex修改也在这
-    startTimer();
-    // bookmarkex变化，进入阅读模式。存storage
-    currentBookObj.bookmarkEX.href = href;
-    currentBookObj.bookmarkEX.offset = offset;
-    currentBookObj.bookmarkEX.currentChapterCount = bodyText.length;
-    saveCurrentBookObj();
+    chrome.commands.onCommand.addListener(command => {
+        if (command == "displayText") {
+            startTimer();
+            // bookmarkex变化，进入阅读模式。存storage
+            currentBookObj.bookmarkEX.href = href;
+            currentBookObj.bookmarkEX.offset = offset;
+            currentBookObj.bookmarkEX.currentChapterCount = bodyText.length;
+            saveCurrentBookObj();
+
+            chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+                chrome.tabs.sendMessage(tabs[0].id, { action: "displayText" , text: result });
+            });
+        }
+    });
 
     console.log(`从${offset}开始的${currentTextSize}字符：
         ${result}`);

@@ -35,5 +35,11 @@
     },
     "background": {
         "service_worker": "src/js/background.js"
-    }
+    },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["scr/js/content.js"]
+        }
+    ]
 }
