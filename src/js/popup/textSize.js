@@ -5,8 +5,6 @@ const textSizeModifyButton = document.getElementById('textSizeModifyButton');
 const textSizeInput = document.getElementById('textSizeInput');
 const textSizeSaveButton = document.getElementById('textSizeSaveButton');
 
-var currentTextSize;
-
 document.addEventListener('DOMContentLoaded', function () {
   initializeTextSize();
 

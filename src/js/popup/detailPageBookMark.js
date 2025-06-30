@@ -11,36 +11,27 @@ document.addEventListener('DOMContentLoaded', function () {
     deleteBookmarkButton.addEventListener('click', handleDeleteBookmark);
 });
 
-function handleAddBookmark() {
-    chrome.storage.local.get('globalReadStatus', function (data) {
-        if (!data.globalReadStatus) {
-            return
-        }
+async function handleAddBookmark() {
+    const response = await sendMessageToBackground("addBookmark", {});
+    if (response.data != null) {
         // bookmark结构
-        const bookmark = {
-            chapter: currentBookEpub.navigation.get(currentBookObj.bookmarkEX.href).label.trim(),
-            // 此时经过navi2，bookmarkex的全文字数应已被赋值
-            progress: currentBookObj.bookmarkEX,
-            createTime: new Date().toLocaleString()
-        }
+        const bookmark = response.data.bookmark;
         // 页面更新
         addBookmarkToList(bookmark);
-        // 全局变量更新
-        currentBookObj.bookmarksList.push(bookmark);
-        // 持久化
-        saveCurrentBookObj();
-    });
+    }
 }
 
 function handleDeleteBookmark() {
     const checkboxes = bookmarksList.querySelectorAll('input[type="checkbox"]');
+    var bookmarksToDelete = [];
     for (let i = checkboxes.length - 1; i >= 0; i--) {
         if (checkboxes[i].checked) {
+            // 时间戳作为删除依据
+            bookmarksToDelete.push(bookmarksList.rows[i].cells[4])
             bookmarksList.deleteRow(i);
-            currentBookObj.bookmarksList.splice(i, 1);
         }
     }
-    saveCurrentBookObj();
+    sendMessageToBackground("deleteBookmark", {bookMarkEXs: bookmarksToDelete})
 }
 
 function handleSelectAllBookmarksChange() {
@@ -56,6 +47,7 @@ function addBookmarkToList(bookmark) {
     const chapterCell = row.insertCell(1);
     const progressCell = row.insertCell(2);
     const createTimeCell = row.insertCell(3);
+    const timeStampCell = row.insertCell(4);
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
@@ -69,13 +61,16 @@ function addBookmarkToList(bookmark) {
         var percent = (bookmark.progress.offset / bookmark.progress.currentChapterCount) * 100
         progressCell.textContent = percent;
     }
-    createTimeCell.textContent = bookmark.createTime;
+
+    timeStampCell.textContent = bookmark.timeStamp;
+    timeStampCell.style.display = 'none';
+
+    createTimeCell.textContent = new Date(bookmark.timeStamp).toLocaleString();
 
     [chapterCell, progressCell, createTimeCell].forEach(cell => {
         cell.style.cursor = 'pointer';
         cell.addEventListener('click', () => {
-            enableReadStatus();
-            navigateToChapter2(bookmark.progress.href, bookmark.progress.offset);
+            parseSpecificBook(currentBookObj.bookName, bookmark.progress.href, bookmark.progress.offset);
         });
     });
 }

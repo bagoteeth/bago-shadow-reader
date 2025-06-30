@@ -1,0 +1,44 @@
+Date : 2024-08-30 17:33:54
+Directory : z:\exp\testchromeplug\bagoReader\src\js
+Total : 17 files,  750 codes, 56 comments, 113 blanks, all 919 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JavaScript |         17 |        750 |         56 |        113 |        919 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                    | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                       |         17 |        750 |         56 |        113 |        919 |
+| background                                                              |          6 |        209 |          4 |         28 |        241 |
+| content                                                                 |          2 |         48 |          0 |          6 |         54 |
+| popup                                                                   |          9 |        493 |         52 |         79 |        624 |
++-------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                | language   | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| z:\exp\testchromeplug\bagoReader\src\js\background\background.js        | JavaScript |         32 |          1 |          4 |         37 |
+| z:\exp\testchromeplug\bagoReader\src\js\background\display.js           | JavaScript |         44 |          1 |          7 |         52 |
+| z:\exp\testchromeplug\bagoReader\src\js\background\parseEpub.js         | JavaScript |          0 |          0 |          1 |          1 |
+| z:\exp\testchromeplug\bagoReader\src\js\background\readingController.js | JavaScript |         86 |          1 |          9 |         96 |
+| z:\exp\testchromeplug\bagoReader\src\js\background\router.js            | JavaScript |         18 |          0 |          3 |         21 |
+| z:\exp\testchromeplug\bagoReader\src\js\background\timer.js             | JavaScript |         29 |          1 |          4 |         34 |
+| z:\exp\testchromeplug\bagoReader\src\js\content\content.js              | JavaScript |         48 |          0 |          5 |         53 |
+| z:\exp\testchromeplug\bagoReader\src\js\content\router.js               | JavaScript |          0 |          0 |          1 |          1 |
+| z:\exp\testchromeplug\bagoReader\src\js\popup\booklist.js               | JavaScript |        129 |         23 |         18 |        170 |
+| z:\exp\testchromeplug\bagoReader\src\js\popup\communication.js          | JavaScript |          0 |          0 |          1 |          1 |
+| z:\exp\testchromeplug\bagoReader\src\js\popup\detailPage.js             | JavaScript |        153 |          9 |         22 |        184 |
+| z:\exp\testchromeplug\bagoReader\src\js\popup\detailPageBookMark.js     | JavaScript |         72 |          6 |          9 |         87 |
+| z:\exp\testchromeplug\bagoReader\src\js\popup\detailPageToc.js          | JavaScript |         13 |          2 |          5 |         20 |
+| z:\exp\testchromeplug\bagoReader\src\js\popup\overview.js               | JavaScript |         11 |         10 |          4 |         25 |
+| z:\exp\testchromeplug\bagoReader\src\js\popup\popup.js                  | JavaScript |          1 |          0 |          1 |          2 |
+| z:\exp\testchromeplug\bagoReader\src\js\popup\readingControl.js         | JavaScript |         88 |          1 |         10 |         99 |
+| z:\exp\testchromeplug\bagoReader\src\js\popup\textSize.js               | JavaScript |         26 |          1 |          9 |         36 |
+| Total                                                                   |            |        750 |         56 |        113 |        919 |
++-------------------------------------------------------------------------+------------+------------+------------+------------+------------+

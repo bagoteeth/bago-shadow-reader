@@ -25,9 +25,6 @@ function initializeFileList() {
             addFileToTable(book.bookName);
         }
     });
-    // chrome.runtime.sendMessage({ action: 'getFiles' }, function (response) {
-    //   response.files.forEach(file => addFileToTable(file));
-    // });
 }
 
 function handleAddButtonClick() {
@@ -37,14 +34,6 @@ function handleAddButtonClick() {
     fileInput.multiple = true;
     fileInput.addEventListener('change', handleFileInputChange);
     fileInput.click();
-
-    // chrome.fileSystem.chooseEntry({type: 'openFile', accepts: [{extensions: ['epub']}], accpetcMultiple: true}, function(fileEntries){
-    //   if (fileEntries && fileEntries,length > 0){
-    //     fileEntries.forEach(fe => handleFileInput(fe));
-    //   } else {
-    //     alert('未选择文件');
-    //   }
-    // });
 }
 
 function handleDeleteButtonClick() {
@@ -57,7 +46,6 @@ function handleDeleteButtonClick() {
             fileList.deleteRow(i + 1);
         }
     }
-    // chrome.runtime.sendMessage({ action: 'deleteFiles', files: filesToDelete });
     chrome.storage.local.get({ books: [] }, function (result) {
         const tmpFiles = result.books.filter(function (book) {
             return !filesToDelete.includes(book.bookName);
@@ -85,7 +73,6 @@ function handleFileInputChange(event) {
         addFileToTable(file.name);
     }
     // 持久化
-    // chrome.runtime.sendMessage({ action: 'addFiles', files: selectedFiles})
     chrome.storage.local.get({ books: [] }, function (result) {
         const tmpFiles = result.books || [];
         for (const file of selectedFiles) {
@@ -98,7 +85,7 @@ function handleFileInputChange(event) {
                     /* {
                       chapter: xxx,
                       progress: xxx,
-                      createTime: xxx
+                      timeStamp: xxx
                     } */
                     bookmarksList: [],
                     bookmarkEX: {

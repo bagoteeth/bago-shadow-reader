@@ -6,19 +6,20 @@
     "permissions": [
         "storage",
         "unlimitedStorage",
-        "activeTab"
+        "activeTab",
+        "tabs"
     ],
     "icons": {
-        "16": "src/imgs/btn16.png",
-        "48": "src/imgs/btn48.png",
-        "128": "src/imgs/btn128.png"
+        "16": "src/resources/btn16.png",
+        "48": "src/resources/btn48.png",
+        "128": "src/resources/btn128.png"
     },
     "action": {
         "default_popup": "src/html/popup.html",
         "default_icon": {
-            "16": "src/imgs/btn16.png",
-            "48": "src/imgs/btn48.png",
-            "128": "src/imgs/btn128.png"
+            "16": "src/resources/btn16.png",
+            "48": "src/resources/btn48.png",
+            "128": "src/resources/btn128.png"
         },
         "default_title": "Bago click me"
     },
@@ -31,15 +32,33 @@
                 "default": "Alt+R"
             },
             "description": "display text"
+        },
+        "nextPage": {
+            "description": "next page"
+        },
+        "nextChapter": {
+            "description": "next chapter"
+        },
+        "lastPage": {
+            "description": "last page"
+        },
+        "lastChapter": {
+            "description": "last chapter"
         }
     },
     "background": {
-        "service_worker": "src/js/background.js"
+        "service_worker": "src/js/background/background.js"
     },
     "content_scripts": [
         {
             "matches": ["<all_urls>"],
-            "js": ["scr/js/content.js"]
+            "js": ["src/js/content/router.js","src/js/content/content.js"]
+        }
+    ],
+        "web_accessible_resources": [
+        {
+            "resources": ["src/html/reader.html"],
+            "matches": ["<all_urls>"]
         }
     ]
 }
